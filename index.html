@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>이력서</title>
+
+  <style>
+    /* ===== 기본(화면) ===== */
+    :root{
+      --text:#111;
+      --muted:#666;
+      --line:#bdbdbd;
+      --thin:#d9d9d9;
+      --bg:#fff;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      background:#f2f2f2;
+      color:var(--text);
+      font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      line-height:1.35;
+    }
+
+    /* A4 문서처럼 보이게 */
+    .page{
+      width: 210mm;
+      min-height: 297mm;
+      margin: 16px auto;
+      background: var(--bg);
+      padding: 16mm 18mm;
+      box-shadow: 0 6px 18px rgba(0,0,0,.12);
+      position: relative;
+    }
+
+    /* 상단 헤더 */
+    header{
+      text-align:center;
+      margin-bottom: 10mm;
+    }
+    header .name{
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: .2px;
+      margin: 0 0 6px 0;
+    }
+    header .title{
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0;
+    }
+    header .rule{
+      border:0;
+      border-top:1px solid var(--line);
+      margin: 8px 0;
+    }
+    header .contact{
+      display:flex;
+      gap: 10px;
+      justify-content:center;
+      flex-wrap:wrap;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+    header .contact span{
+      white-space:nowrap;
+    }
+
+   .section{
+  margin-top: 10mm;
+}
+.section-title{
+  font-size: 13px;
+  font-weight: 800;
+  margin: 0 0 6mm 0;
+}
+
+/* ✅ 핵심 1: item들이 가로로 나란히 가지 않게 '세로로 쌓기' 강제 */
+.timeline{
+  border-top: 1px solid var(--thin);
+  padding-top: 6mm;
+
+  display: flex;              /* 추가 */
+  flex-direction: column;     /* 추가 */
+}
+
+/* ✅ 핵심 2: item 폭을 항상 100%로 */
+.item{
+  width: 100%;                /* 추가 */
+
+  display: grid;
+  grid-template-columns: 40mm 1fr;
+  column-gap: 10mm;
+  padding: 5mm 0;
+  border-bottom: 1px solid var(--thin);
+}
+
+/* 특정 항목 뒤의 선 제거 */
+.item.no-divider-after{
+  border-bottom: none;
+}
+
+.period{
+  font-size: 12px;
+  color: var(--muted);
+  text-align: right;
+  padding-top: 1mm;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px
+}
+.period-date{
+  white-space: nowrap;
+}
+
+.period-sub{
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.2;
+  white-space: nowrap; /* 연구실명도 줄바꿈 원치 않으면 유지 */
+}
+
+/* ✅ 핵심 3: grid 안에서 텍스트 폭 계산 깨짐 방지 */
+.content{
+  min-width: 0;               /* 추가 */
+  word-break: keep-all;       /* 추가: 한글 단어가 이상하게 쪼개지는 것 방지 */
+  overflow-wrap: anywhere;    /* 추가: 너무 긴 영문/URL만 적절히 줄바꿈 */
+}
+
+.content .heading{
+  display:flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap:wrap;
+  margin-bottom: 2mm;
+}
+.content .heading .role{
+  font-size: 13px;
+  font-weight: 800;
+}
+.content .heading .org{
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.content .subline{
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 2mm 0;
+}
+
+/* 불릿(1차: -) */
+ul.bullets{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+ul.bullets li{
+  position: relative;
+  padding-left: 16px;
+  margin: 1.2mm 0;
+  font-size: 12.2px;
+}
+ul.bullets li::before{
+  content: "-";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--text);
+  font-weight: 700;
+}
+ul.bullets li .muted{
+  color: var(--muted);
+}
+
+/* 2차 불릿(·) */
+ul.bullets li .sub{
+  margin-left: 16px;
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.4;
+  position: relative;
+  padding-left: 10px;
+}
+ul.bullets li .sub::before{
+  content: "·";
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+/* 작은 캡션 */
+.note{
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6mm;
+  text-align: left;
+}
+ul.bullets li .sub{
+  margin-left: 16px;      /* 1차 불릿보다 안쪽 */
+  margin-top: 2px;
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.4;
+  position: relative;
+  padding-left: 10px;     /* · 표시 공간 */
+}
+
+ul.bullets li .sub::before{
+  content: "·";
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+/* 불릿 아래 한 칸 들여쓴 설명 */
+ul.bullets li .indent{
+  margin-left: 16px;      /* 한 칸 들여쓰기 */
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+ul.bullets li .indent::before{
+  content: "· ";
+}
+ul.bullets li .indent .sub-bullet{
+  margin-top: 2px;
+  padding-left: 10px;     /* · 표시 공간 */
+  position: relative;
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+ul.bullets li .indent .sub-bullet::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+
+
+    /* ===== 인쇄(PDF) ===== */
+    @page{
+      size: A4;
+      margin: 12mm 12mm;
+    }
+    @media print{
+      body{ background:#fff; }
+      .page{
+        width: auto;
+        min-height: auto;
+        margin: 0;
+        box-shadow: none;
+        padding: 0;
+      }
+      a{ color: inherit; text-decoration: none; }
+      .no-print{ display:none !important; }
+    }
+
+    /* 선택: 화면에서만 보이는 PDF 안내 */
+    .hint{
+      font-size: 12px;
+      color: var(--muted);
+      text-align:center;
+      margin: 8px 0 0 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <header>
+      <h1 class="name">박기형</h1>
+      <hr class="rule">
+      <p class="title">())</p>
+      <hr class="rule">
+      <div class="contact">
+        <span>📧 bbgswm@gmail.com</span>
+        <span>📱 010-8922-7844</span>
+      </div>
+      <p class="hint no-print">PDF로 저장하려면 브라우저 인쇄(Ctrl+P) → “PDF로 저장”을 선택하세요.</p>
+    </header>
+
+
+    <!-- ================== 주요 경력/프로젝트 ================== -->
+    <section class="section">
+      <h2 class="section-title">경력</h2>
+
+  <div class="timeline">
+  
+  
+  <!-- 1) · 첫 번째 항목: 여기(no-divider-after)에만 붙이면 "중간선"이 사라짐 -->
+  <div class="item no-divider-after">
+      <div class="period">
+    <div class="period-date">2022.12 ~ 2023.02 </div>
+      <div class="period-sub">단기현장실습</div>
+   
+      </div>
+    <div class="content">
+      <div class="heading">
+        <span class="role">Unity 기반 메타버스 가상 실험 콘텐츠 개발</span>
+        <span class="org">(주)듀코젠</span>
+      </div>
+      <p class="subline">기술: Unity, VR, Visual Scripting, C#</p>
+
+      <ul class="bullets">
+        <li>Unity 기반 메타버스 플랫폼에서 가상 실험 콘텐츠 기능 구현</li>
+        <li>Visual Scripting을 활용하여 실험 환경별 상호작용/동작 로직 구현</li>
+        <li>사내 아트팀과 협업하여 VR 실험 도구 디자인 협의 및 도구 속성(사용 가능 상태/기능) 설정</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 2) 두 번째 항목: 일반 item -->
+  <div class="item">
+    <div class="period"></div>
+    <div class="content">
+      <div class="heading">
+        <span class="role">교육 캠프 지원 · Unity 프로그래밍 강의 보조</span>
+        <span class="org">진주대학교 CUE 디지털 새싹 SW/AI 교육 캠프</span>
+      </div>
+      <p class="subline">대상: 초등학생 / 역할: 강의 준비·보조, 실습 운영 지원</p>
+
+      <ul class="bullets">
+        <li>Unity 프로그래밍 강의 자료 준비 및 강의 보조</li>
+        <li>VR 기기 체험 활동 운영 보조 및 안전/진행 지원</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+    
+
+    <!-- ================== 학력(예시) ================== -->
+    <section class="section">
+  <h2 class="section-title">학력</h2>
+
+  <div class="timeline">
+
+    <!-- 대학원 (아래와 선을 합치기 위해 no-divider-after) -->
+    <div class="item no-divider-after">
+      <div class="period">
+      <div class="period-date">2023.08 ~ 2025.08</div>
+      <div class="period-sub">학·석사통합과정</div>
+      <div class="period-sub">CV3VPL 연구실</div>
+    </div>
+      <div class="content">
+        <div class="heading">
+          <span class="role">한국기술교육대학교 일반대학원 전기·전자·통신공학과 미래융합공학전공</span>
+          <span class="org">연구 분야: 컴퓨터비전, 머신러닝</span>
+        </div>
+        
+        <ul class="bullets">
+          <li>졸업 논문 : 글자 간 유사도 측정방식 및 이를 활용한 인쇄본 판별
+          <div class="indent">
+         데이터 생성 및 가공, 데이터 라벨링
+          </div>
+            <div class="indent">
+         Python을 이용한 이미지 정합 및 유사도 측정  
+            <div class="sub-bullet">
+            (ICP, Gaussian smoothing, Area-Based Matching )
+            </div>
+            
+        </ul>
+        <ul class="bullets">
+          <li>프로젝트 : 금속활자본 과학적 분석 및 활용
+          <div class="indent">
+         한글 동활자 DB 구축 및 활자 추출 알고리즘 개발
+         <div class="sub-bullet">
+            데이터 가공 (Photoshop)
+          </div>
+          <div class="sub-bullet">
+            프로그램 제작 보조 (MATLAB, Python)
+          </div>
+          </div>
+            <div class="indent">
+         청주 흥덕사자 디지털 복원
+            <div class="sub-bullet">
+            3D 활자복원 보조 (Unity)
+            </div>
+            </div>
+        <div class="indent">
+         과학적 분석을 통한 금속활자본과 목판본 간의 판별 기술 연구
+            <div class="sub-bullet">
+            글자 간격 등간척도를 통한 판별 기준 제시 (MATLAB, Python)
+            </div>
+            
+        </ul>
+    
+      </div>
+    </div>
+
+    <!-- 대학 (위와 묶이므로 선 없음) -->
+    <div class="item">
+      <div class="period">2018.03 ~ 2023.08</div>
+      <div class="content">
+        <div class="heading">
+          <span class="role">한국기술교육대학교 전기·전자·통신공학과 전자공학전공</span>
+          
+        </div>
+
+        <ul class="bullets">
+          <li>졸업 논문 : 금속활자로 인쇄된 글자를 위한 영상 정합
+          <div class="indent">
+            현대의 인쇄물과 달리 활자본의 경우 인쇄된 글자의 
+            모양과 방향이 일정하지 않음.
+            </div>
+            <div class="indent">
+            인쇄본의 글자를 분석하기 위해서는 각 글자들의 정확한 정합을 수행해야함
+            </div>         
+            <div class="indent">
+            인쇄글자의 Skeleton image를 사용하여 특징점을 사용한 밝기 기반 정합을 적용하여 
+            일반적인 정합방법보다 신뢰도 높은 결과를 얻음
+            </div>     
+        </ul>
+
+
+        
+           <ul class="bullets">
+          <li>프로젝트 : Camera Calibraion을 이용한 Stereo Depth Estimation (MATLAB, C++)
+          <div class="indent">
+           Stereo Camera로 촬영된 사진의 깊이를 추정하는 코드제작 및 측정
+            </div>
+             
+        </ul>
+           <ul class="bullets">
+          <li>프로젝트 : ATmega128을 사용한 마작 점수 표시기 (C)
+          <div class="indent">
+          점수봉 교환 및 사용자의 점수를 실시간으로 알 수 없는 불편사항이 존재
+            </div>
+              <div class="indent">
+          MJ-REVO Smart 제품의 표현방식을 참고하여 터치스크린과 LCD 모듈을 사용하여 제작
+
+        </div>
+        </ul>
+           <ul class="bullets">
+          <li>프로젝트 : MFC programming을 (C++)
+          <div class="indent">
+            
+            </div>
+             
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+    <p class="note">※ 필요에 따라 “자격증 / 수상 / 포트폴리오 링크 / 병역” 섹션을 같은 형식으로 추가하실 수 있습니다.</p>
+  </div>
+</body>
+</html>
