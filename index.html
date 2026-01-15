@@ -23,6 +23,18 @@
       line-height:1.35;
     }
 
+    .photo{
+      display: flex;
+     justify-content: center;
+    margin-bottom: 6mm;
+    }
+    .photo img{
+   width: 40mm;        /* 사진 크기 */
+    height: 50mm;
+   object-fit: cover;
+    border: 1px solid var(--line);
+}
+
     /* A4 문서처럼 보이게 */
     .page{
       width: 210mm;
@@ -276,9 +288,13 @@ ul.bullets li .indent .sub-bullet::before{
 <body>
   <div class="page">
     <header>
+      <div class="photo">
+        <img src="photo.jpg" alt="프로필 사진">
+      </div>
+      
       <h1 class="name">박기형</h1>
       <hr class="rule">
-      <p class="title">())</p>
+      <p class="title">경력 및 포트폴리오</p>
       <hr class="rule">
       <div class="contact">
         <span>📧 bbgswm@gmail.com</span>
@@ -323,9 +339,9 @@ ul.bullets li .indent .sub-bullet::before{
     <div class="content">
       <div class="heading">
         <span class="role">교육 캠프 지원 · Unity 프로그래밍 강의 보조</span>
-        <span class="org">진주대학교 CUE 디지털 새싹 SW/AI 교육 캠프</span>
+        <span class="org">진주교육대학교 CUE 디지털 새싹 SW/AI 교육 캠프</span>
       </div>
-      <p class="subline">대상: 초등학생 / 역할: 강의 준비·보조, 실습 운영 지원</p>
+      <p class="subline">대상: 초등학생 / 업: 강의 준비·보조, 실습 운영 지원</p>
 
       <ul class="bullets">
         <li>Unity 프로그래밍 강의 자료 준비 및 강의 보조</li>
@@ -438,15 +454,16 @@ ul.bullets li .indent .sub-bullet::before{
             </div>
               <div class="indent">
           MJ-REVO Smart 제품의 표현방식을 참고하여 터치스크린과 LCD 모듈을 사용하여 제작
- </li>
-        </div>
-        </ul>
-           <ul class="bullets">
+      </li>
+              <ul class="bullets">
           <li>프로젝트 : MFC programming을 이용한 GUI 제작 (C#)
           <div class="indent">
-            Arduino를 PC로 조작하는 GUI를 제작하여 Servo Motor, LED, Push Button, Potentiometer를 제어하는 프로그램 개발  
+            Arduino를 PC로 조작하는 GUI를 제작하여 Servo Motor, LED, Push Button, Potentiometer를 제어하는 프로그램 제작  
             </div>
               </li>
+        </div>
+        </ul>
+   
         </ul>
       </div>
     </div>
